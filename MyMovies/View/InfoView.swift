@@ -10,6 +10,9 @@ import SwiftUI
 struct InfoView: View {
     @StateObject private var viewModel = InfoViewModel()
     
+    var titleOn: Bool
+    var rowHeight: Double
+    
     var body: some View {
         NavigationView {
             Group {
@@ -32,12 +35,13 @@ struct InfoView: View {
                 } else {
                     List(viewModel.posts) { post in
                         NavigationLink(destination: InfoDetails(post: post)) {
-                            InfoRow(post: post)
+                            InfoRow(post: post, rowHeight: rowHeight)
                         }
                     }
                 }
             }
-            .navigationTitle("Фильмы и сериалы")
+            .navigationTitle(titleOn ? "Фильмы и сериалы": "")
+            .navigationBarTitleDisplayMode(titleOn ? .automatic : .inline)
         }
         .task {
             await viewModel.loadPosts()

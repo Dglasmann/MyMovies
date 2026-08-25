@@ -9,6 +9,7 @@ import SwiftUI
 
 struct InfoRow: View {
     var post: Post
+    var rowHeight: Double = 60
     
     var body: some View {
         HStack {
@@ -27,7 +28,7 @@ struct InfoRow: View {
                 }
             }
             .clipShape(Circle())
-            .frame(width: 60, height: 60)
+            .frame(width: rowHeight, height: rowHeight)
             .padding(.trailing, 8)
             
             Text(post.title)
@@ -37,5 +38,6 @@ struct InfoRow: View {
             Spacer()
         }
         .padding(.vertical, 4)
+        .frame(minHeight: rowHeight)
     }
 }
