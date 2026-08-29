@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct InfoView: View {
-    @StateObject private var viewModel = InfoViewModel()
+    @ObservedObject var viewModel: InfoViewModel
+    @ObservedObject var quizStore: QuizStore
     
     var titleOn: Bool
     var rowHeight: Double
@@ -33,18 +34,36 @@ struct InfoView: View {
                     }
                     .padding()
                 } else {
-                    List(viewModel.posts) { post in
-                        NavigationLink(destination: InfoDetails(post: post)) {
-                            InfoRow(post: post, rowHeight: rowHeight)
+                    
+                    List {
+                        if !quizStore.learnedPosts.isEmpty {
+                            Section("Изучено в викторине") {
+                                ForEach(quizStore.learnedPosts) { post in
+                                    NavigationLink(destination: InfoDetails(post: post)) {
+                                        InfoRow(post: post, rowHeight: rowHeight)
+                                    }
+                                }
+                            }
                         }
+                        Section(quizStore.learnedPosts.isEmpty ? "" : "Все фильмы") {
+                            ForEach(viewModel.posts) { post in
+                                NavigationLink(destination: InfoDetails(post: post)) {
+                                    InfoRow(post: post, rowHeight: rowHeight)
+                                }
+                            }
+                        }
+                        
                     }
+                    .animation(.easeInOut, value: quizStore.learnedPosts.count)
                 }
             }
             .navigationTitle(titleOn ? "Фильмы и сериалы": "")
             .navigationBarTitleDisplayMode(titleOn ? .automatic : .inline)
         }
         .task {
-            await viewModel.loadPosts()
+            if viewModel.posts.isEmpty {
+                await viewModel.loadPosts()
+            }
         }
     }
 }

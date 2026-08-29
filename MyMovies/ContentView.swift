@@ -9,17 +9,20 @@ import SwiftUI
 
 struct ContentView: View {
     
+    @StateObject private var viewModel = InfoViewModel()
+    @StateObject private var quizStore = QuizStore()
+    
     @AppStorage("titleOn") private var titleOn: Bool = true
     @AppStorage("rowHeight") private var rowHeight: Double = 60
     
     
     var body: some View {
         TabView {
-            InfoView(titleOn: titleOn, rowHeight: rowHeight)
+            InfoView(viewModel: viewModel, quizStore: quizStore, titleOn: titleOn, rowHeight: rowHeight)
                 .tabItem {
                     Label("Фильмы", systemImage: "film")
                 }
-            HelloView()
+            MovieQuizView(viewModel: viewModel, quizStore: quizStore)
                 .tabItem {
                     Label("Hello", systemImage: "hand.wave")
                 }
